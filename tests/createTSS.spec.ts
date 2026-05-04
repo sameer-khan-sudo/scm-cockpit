@@ -115,4 +115,3 @@
 //     })
 // })
 
-console.log("This file is intentionally left blank as the Create TSS flow is currently under development. Please refer to the SCM Flow and Item Details test files for existing test implementations.");

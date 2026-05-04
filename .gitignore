@@ -3,5 +3,11 @@ node_modules/
 test-user.json
 test-results/
 generated-auth/
-tests/
-!tests/index.spec.ts
+
+# Ignore all tests
+
+tests/**
+
+# Allow only this specific file
+
+!tests/auth/index.spec.ts

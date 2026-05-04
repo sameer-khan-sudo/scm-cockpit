@@ -10,4 +10,4 @@ tests/**
 
 # Allow only this specific file
 
-!tests/auth/index.spec.ts
+!tests/index.spec.ts

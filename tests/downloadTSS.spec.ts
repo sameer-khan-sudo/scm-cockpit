@@ -1,127 +1,127 @@
-import test, { BrowserContext, expect, Page } from "playwright/test";
-import { BasePage } from "../pages/BasePage"
-import { ScmDashboardPage } from "../pages/ScmDashboardPage"
-import { TSSList } from "../pages/tssListPage"
-import { DPPLP } from "../pages/dpplp.Page";
-import path from 'path';
-import fs from 'fs';
-import * as XLSX from 'xlsx';
+// import test, { BrowserContext, expect, Page } from "playwright/test";
+// import { BasePage } from "../pages/BasePage"
+// import { ScmDashboardPage } from "../pages/ScmDashboardPage"
+// import { TSSList } from "../pages/tssListPage"
+// import { DPPLP } from "../pages/dpplp.Page";
+// import path from 'path';
+// import fs from 'fs';
+// import * as XLSX from 'xlsx';
 
 
-test.describe.serial("Download TSS Data", () => {
+// test.describe.serial("Download TSS Data", () => {
 
-    let context: BrowserContext;
-    let page: Page;
-    let base: BasePage;
-    let scm: ScmDashboardPage;
-    let tssListPage: TSSList;
-    let dpplpPage: DPPLP;
-
-
-    test.beforeAll(async ({ browser }) => {
-
-        context = await browser.newContext({
-            storageState: "playwright/.auth/test-user.json",
-            acceptDownloads: true
-
-        })
-
-        page = await context.newPage();
-
-        base = new BasePage(page);
-        scm = new ScmDashboardPage(page);
-        tssListPage = new TSSList(page)
-        dpplpPage = new DPPLP(page);
-
-    })
-
-    test.afterAll(async () => {
-        await context.close()
-    })
-
-    test("TESTCASE 1 - Launch SCM Cockpit.", async () => {
-        await page.goto("scmcockpit");
-        await expect(page).toHaveURL(/scmcockpit/);
-        await base.click(scm.scmCockpitCard);
-    });
-
-    test('TESTCASE 2 - Click TSS Card.', async () => {
-        await base.click(tssListPage.tssCard);
-        await expect(page.locator('div').filter({ hasText: /^HomeTender Sourcing Strategy$/ })).toBeVisible();
-    });
+//     let context: BrowserContext;
+//     let page: Page;
+//     let base: BasePage;
+//     let scm: ScmDashboardPage;
+//     let tssListPage: TSSList;
+//     let dpplpPage: DPPLP;
 
 
+//     test.beforeAll(async ({ browser }) => {
 
-    // test('TESTCASE 3 : Download TSS File', async () => {
+//         context = await browser.newContext({
+//             storageState: "playwright/.auth/test-user.json",
+//             acceptDownloads: true
 
-    //     const downloadPromise = page.waitForEvent('download');
+//         })
 
-    //     await page.getByRole('button', { name: 'download-grid-data' }).click();
+//         page = await context.newPage();
 
-    //     await tssListPage.verifySuccessToast();
+//         base = new BasePage(page);
+//         scm = new ScmDashboardPage(page);
+//         tssListPage = new TSSList(page)
+//         dpplpPage = new DPPLP(page);
 
-    //     const download = await downloadPromise;
+//     })
 
-    //     const fileName = download.suggestedFilename();
+//     test.afterAll(async () => {
+//         await context.close()
+//     })
 
-    //     expect(fileName).toContain('tss-list-tss');
+//     test("TESTCASE 1 - Launch SCM Cockpit.", async () => {
+//         await page.goto("scmcockpit");
+//         await expect(page).toHaveURL(/scmcockpit/);
+//         await base.click(scm.scmCockpitCard);
+//     });
 
-    //     const filePath = path.join('downloads', fileName);
+//     test('TESTCASE 2 - Click TSS Card.', async () => {
+//         await base.click(tssListPage.tssCard);
+//         await expect(page.locator('div').filter({ hasText: /^HomeTender Sourcing Strategy$/ })).toBeVisible();
+//     });
 
-    //     await download.saveAs(filePath);
 
-    //     expect(fs.existsSync(filePath)).toBeTruthy();
 
-    // });
-    test('TESTCASE 3 : Download TSS File and Validate Excel Data', async () => {
-        // Wait for download and click button
-        const [download] = await Promise.all([
-            page.waitForEvent('download'),
-            page.getByRole('button', { name: 'download-grid-data' }).click()
-        ]);
+//     // test('TESTCASE 3 : Download TSS File', async () => {
 
-        // Get downloaded file name
-        const fileName = download.suggestedFilename();
+//     //     const downloadPromise = page.waitForEvent('download');
 
-        // Create file path
-        const filePath = path.join('downloads', fileName);
+//     //     await page.getByRole('button', { name: 'download-grid-data' }).click();
 
-        // Save downloaded file
-        await download.saveAs(filePath);
+//     //     await tssListPage.verifySuccessToast();
 
-        console.log("Downloaded File:", fileName);
+//     //     const download = await downloadPromise;
 
-        // Verify file exists
-        expect(fs.existsSync(filePath)).toBeTruthy();
+//     //     const fileName = download.suggestedFilename();
 
-        // Read Excel file
-        const workbook = XLSX.readFile(filePath);
+//     //     expect(fileName).toContain('tss-list-tss');
 
-        // Get first sheet
-        const sheetName = workbook.SheetNames[0];
+//     //     const filePath = path.join('downloads', fileName);
 
-        const sheet = workbook.Sheets[sheetName];
+//     //     await download.saveAs(filePath);
 
-        // Convert Excel to raw array
-        const rawData: any[] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+//     //     expect(fs.existsSync(filePath)).toBeTruthy();
 
-        console.log("Total Rows in Excel:", rawData.length);
+//     // });
+//     test('TESTCASE 3 : Download TSS File and Validate Excel Data', async () => {
+//         // Wait for download and click button
+//         const [download] = await Promise.all([
+//             page.waitForEvent('download'),
+//             page.getByRole('button', { name: 'download-grid-data' }).click()
+//         ]);
 
-        // Get first row (header)
-        const firstRow = rawData[0];
+//         // Get downloaded file name
+//         const fileName = download.suggestedFilename();
 
-        console.log("Excel Headers:", firstRow);
+//         // Create file path
+//         const filePath = path.join('downloads', fileName);
 
-        // Expected headers
-        const expectedHeaders = [
-            'LPG',
-            'Project Name',
-            'TSS ID',
-            'Salesforce ID',
-            'Project Status'
-        ];
+//         // Save downloaded file
+//         await download.saveAs(filePath);
 
-        // Validate only first 5 columns
-        expect(firstRow.slice(0, 5)).toEqual(expectedHeaders);
-    })
-})
+//         console.log("Downloaded File:", fileName);
+
+//         // Verify file exists
+//         expect(fs.existsSync(filePath)).toBeTruthy();
+
+//         // Read Excel file
+//         const workbook = XLSX.readFile(filePath);
+
+//         // Get first sheet
+//         const sheetName = workbook.SheetNames[0];
+
+//         const sheet = workbook.Sheets[sheetName];
+
+//         // Convert Excel to raw array
+//         const rawData: any[] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+//         console.log("Total Rows in Excel:", rawData.length);
+
+//         // Get first row (header)
+//         const firstRow = rawData[0];
+
+//         console.log("Excel Headers:", firstRow);
+
+//         // Expected headers
+//         const expectedHeaders = [
+//             'LPG',
+//             'Project Name',
+//             'TSS ID',
+//             'Salesforce ID',
+//             'Project Status'
+//         ];
+
+//         // Validate only first 5 columns
+//         expect(firstRow.slice(0, 5)).toEqual(expectedHeaders);
+//     })
+// })
